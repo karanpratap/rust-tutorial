@@ -1,3 +1,5 @@
+use std::cmp::Ordering;
+
 struct User {
     username: String,
     password: String
@@ -22,6 +24,14 @@ fn main() {
 
     println!("Words: {}", words);
     println!("Words: {}", _first);
+
+    let str1 = "hello";
+    let str2 = "hellw";
+    match str1.cmp(str2) {
+        Ordering::Equal => println!("Equal"),
+        Ordering::Greater => println!("Greater"),
+        Ordering::Less => println!("Less"),
+    }
 }
 
 fn first_word(line: &str) -> &str {
