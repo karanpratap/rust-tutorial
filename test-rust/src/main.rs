@@ -1,4 +1,7 @@
+use core::panic;
 use std::cmp::Ordering;
+use std::fs::File;
+use std::io::ErrorKind;
 
 struct User {
     username: String,
@@ -32,6 +35,17 @@ fn main() {
         Ordering::Greater => println!("Greater"),
         Ordering::Less => println!("Less"),
     }
+
+    let f1 = File::open("test_file").unwrap_or_else(|error| {
+        if error.kind() == ErrorKind::NotFound {
+            println!("Create file");
+            File::create("test_file").unwrap_or_else(|err| {
+                panic!("Unable to create file: {}", err);
+            })
+        } else {
+            panic!("Unable to open file: {}", error);
+        }
+    });
 }
 
 fn first_word(line: &str) -> &str {
