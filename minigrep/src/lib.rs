@@ -8,19 +8,31 @@ pub struct Config {
 }
 
 impl Config {
-    pub fn new(args: &[String]) -> Result<Self, &'static str> {
-        if args.len() < 3 {
-            return Err("Too few arguments, needed at least 2");
-        }
+    pub fn new(mut args: impl Iterator<Item = String>) -> Result<Self, &'static str> {
+        args.next();    // ignore program name and get to the real args
+
+        let search_string = match args.next() {
+            Some(query) => query,
+            None => return Err("No search string")
+        };
+
+        let file_path = match args.next() {
+            Some(path) => path,
+            None => return Err("File path not specified")
+        };
+
+        let ignore_case = match args.next() {
+            Some(ic) => {
+                if ic.starts_with("i") { true }
+                else { false }
+            }
+            None => env::var("IGNORE_CASE").is_ok()
+        };
 
         Ok(Self { 
-            search_string: args[1].clone(), 
-            file_path: args[2].clone(),
-            ignore_case: if args.len() > 3 && args[3].starts_with("i") {
-                true
-            } else {
-                env::var("IGNORE_CASE").is_ok()
-            }
+            search_string, 
+            file_path,
+            ignore_case
         })
     }
 }
@@ -42,22 +54,14 @@ pub fn run(config: Config) -> Result<(), Box<dyn Error>> {
 }
 
 pub fn search<'a>(search_string: &str, contents: &'a str) -> Vec<&'a str> {
-    let mut result: Vec<&'a str> = vec![];
-    for line in contents.lines() {
-        if line.contains(search_string) {
-            result.push(line);
-        }
-    }
-    result
+    contents.lines()
+        .filter(|line| line.contains(&search_string))
+        .collect()
 }
 
 pub fn search_case_insensitive<'a>(search_string: &str, contents: &'a str) -> Vec<&'a str> {
     let query = search_string.to_lowercase();
-    let mut result: Vec<&'a str> = vec![];
-    for line in contents.lines() {
-        if line.to_lowercase().contains(&query) {
-            result.push(line);
-        }
-    }
-    result
+    contents.lines()
+        .filter(|line| line.to_lowercase().contains(&query))
+        .collect()
 }

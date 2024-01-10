@@ -3,9 +3,7 @@ use std::process;
 use minigrep::Config;
 
 fn main() {
-    let args : Vec<String> = env::args().collect();
-    dbg!(&args);
-    let config: Config = Config::new(&args).unwrap_or_else(|err| {
+    let config: Config = Config::new(env::args()).unwrap_or_else(|err| {
         eprintln!("Error parsing arguments: {}", err);
         process::exit(-1);
     });
