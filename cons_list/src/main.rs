@@ -29,30 +29,40 @@ impl Node {
         self
     }
 
-    // fn remove_node_index(&mut self, index: usize) {
-    //     let mut curr_index = 0;
-    //     let prev_node = NULL;
-    //     let list = &self;
-    //     loop {
-    //         if let Item(x) = list {
-    //             if curr_index == index {
-    //                 // Remove the element
-    //                 if let Item(y) = prev_node {
-    //                     y.1 = x.1;
-    //                     return;
-    //                 } else {
-    //                     *self = x.1;
-    //                     return;
-    //                 }
-    //             } else {
-    //                 // next!
-    //                 curr_index += 1;
-    //                 prev_node = Item(*x);
-    //                 list = x.1;
-    //             }
-    //         }
-    //     }
-    // }
+    fn remove_node_index(self, index: usize) -> Self {
+        // Base case
+        if index == 0 {
+            if let Item(x) = self {
+                return x.1;
+            } else {
+                println!("Invalid index");
+                return NULL;
+            }
+        } else {
+            if let Item(mut x) = self {
+                x.1 = x.1.remove_node_index(index - 1);
+                return Node::Item(x);
+            } else {
+                println!("Invalid index");
+                return NULL;
+            }
+        }
+    }
+
+    fn add_node_index(self, index: usize, data: i32) -> Self {
+        // Base case
+        if index == 0 {
+            return Item(Box::new((data, self)));
+        } else {
+            if let Item(mut x) = self {
+                x.1 = x.1.add_node_index(index - 1, data);
+                return Item(x);
+            } else {
+                println!("Invalid index");
+                return NULL;
+            }
+        }
+    }
 
     // Function to print the contents of the list without
     // consuming it
@@ -81,6 +91,14 @@ fn main() {
     list.add_node_tail(4);
     list.add_node_tail(5);
     list.print_list();
+    list = list.remove_node_index(1);
+    list.print_list();
+    list = list.add_node_index(2, 20);
+    list.print_list();
+    list = list.remove_node_index(2);
+    list.print_list();
     list = list.remove_node_head();
+    list.print_list();
+    list = list.remove_node_index(0);
     list.print_list();
 }
