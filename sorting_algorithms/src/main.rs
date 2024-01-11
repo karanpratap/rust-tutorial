@@ -1,3 +1,4 @@
+/// Deprecated, moving to generic
 fn merge_helper(mut vec: Vec<u32>, left: usize, middle:usize, right: usize) -> Vec<u32> {
     let mut left_ptr = left;
     let mut right_ptr = middle + 1;
@@ -47,14 +48,14 @@ fn merge_sort(mut vec: Vec<u32>, left: usize, right: usize) -> Vec<u32> {
         return vec;
     }
     let middle = (left + right) / 2;
-    let mut vec = merge_sort(vec, left, middle);
-    let mut vec = merge_sort(vec, middle + 1, right);
-    let mut vec = merge_helper(vec, left, middle, right);
+    let vec = merge_sort(vec, left, middle);
+    let vec = merge_sort(vec, middle + 1, right);
+    let vec = merge_helper(vec, left, middle, right);
     vec
 }
 
 fn main() {
-    let mut vec = vec![1, 5, 8, 2, 3, 4, 9, 210, 100];
+    let vec = vec![1, 5, 8, 2, 3, 4, 9, 210, 100];
     let len = vec.len();
     let vec = merge_sort(vec, 0, len - 1);
 
